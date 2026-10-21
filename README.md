@@ -23,8 +23,12 @@ Synod is named after the Synod protocol, the core consensus algorithm in Leslie 
 
 ## Things to try (Break it)
 
-- **Paxos:** delete the loop that adopts the highest prior value, run
-  seeds 1–200, and watch `always` break.
+- **Paxos:** delete `set best to 0` and the four-line loop below it that
+  adopts the highest prior value (the program still checks), change the
+  demo's latency to `net.Latency between 1ms and 40ms`, run seeds 1–200
+  (`synod run ./paxos --seed 69`), and watch `always` break (it does for 6
+  of the 200 seeds; with the demo's own 10ms to 40ms no seed in 1–200
+  breaks it).
 - **Raft:** shorten the election timeout range to `150ms and 160ms` and
   watch split votes.
 - **Two-phase commit:** move the coordinator crash to `after 80ms`; the
@@ -43,6 +47,23 @@ Synod is named after the Synod protocol, the core consensus algorithm in Leslie 
 - tcp: the closing note at 100ms lands after both ends are ESTABLISHED
   (at most 90ms with the default 10-30ms latency).
 - cassandra's record timestamps are named `stamp` (`at` is reserved).
+- A restarted node starts again from the initial values of its fields,
+  including the ones `main` set (for example the peers `gossip.Join`
+  sets); only its disk survives.
+- Seeds and timings are chosen so that each demo tells its story under the
+  simulator of `synod run` (the stories are tested in `compiler`,
+  `internal/runtest/story_test.go`). Changes made for that, never to a
+  protocol: gossip `sim.Seed` 4 to 15 (with 4 a live node suspects a
+  healthy peer between 5s and 8s); paxos 7 to 105 (the late proposer's
+  Accept carries the adopted `"x"`, as the text above promises); twopc 11
+  to 1 (with 11 a decision was sent before the crash at 45ms and no
+  participant stayed prepared); cassandra 5 to 4 (with 5 no hint was kept
+  and the restarted replica stayed empty). The ring demo places
+  `"ada"`, `"alan"`, `"bob"`, `"dave"`, `"grace"` and `"linus"` instead of
+  `user:1` and its siblings: FNV-1a hashes keys that differ only in the
+  last character to nearly the same point, so with those keys no key
+  moved when the fifth node joined; with these two of the six do. tcp,
+  raft, webapp and wal were unchanged (seeds 3 and 9 hold).
 
 Implements the Synod language specification v0.2.1: https://github.com/synodlang/dsl
 
