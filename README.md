@@ -43,8 +43,8 @@ synod run ./tcp
 
 `synod check` with no path checks every package here and prints nothing when
 all is well. `synod run <folder>` simulates the folder's `demo.synod` and
-writes `out/trace.jsonl`; add `--summary` to read the run as text, `--seed n`
-to try another seed, and `--trace file` to write the trace somewhere else.
+writes `out/trace.jsonl` and the animation `out/scene.json`; add `--summary` to read the run as text, `--seed n`
+to try another seed, `--trace file` to write the trace somewhere else, and `--scene file`, `--pace x` and `--mode proportional` to change the scene.
 The run is deterministic: the same seed gives the same trace, byte for byte.
 
 ## The examples
@@ -64,7 +64,8 @@ The run is deterministic: the same seed gives the same trace, byte for byte.
 Each `demo.synod` asks a question with `lesson.Ask` at the interesting
 moment, and some add a caption with `lesson.Note`. They appear in the trace as
 `lesson.Asked` and `lesson.Noted`. `raftlook` and `ringlook` are looks: they
-check today, and will draw the cluster once the scene builder exists. The
+draw the cluster in `out/scene.json`. The other examples are drawn by the
+default look, `std/look/basic`. The
 `always` invariants (`paxos`, `raft`, `twopc`) are checked after every step;
 `--summary` prints an `always:` block saying whether each held.
 
