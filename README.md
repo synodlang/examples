@@ -155,6 +155,6 @@ Synod is named after the Synod protocol, the core consensus algorithm in Leslie 
   were unchanged. `math.Hash` mixes FNV-1a with the MurmurHash3 finalizer
   so that keys such as `user:1` and `user:2` land far apart on the ring.
 
-Implements the Synod language specification v0.2: https://github.com/synodlang/dsl
+Implements Synod 0.2 (specification: https://github.com/synodlang/dsl).
 
 Licensed under [CC BY 4.0](LICENSE).
