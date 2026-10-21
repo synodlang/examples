@@ -17,6 +17,10 @@ Canonical sample programs. They form one module,
 | `webapp` | Cache-aside behind a load balancer (`api`, `lb`, `app`, `cache`, `db`) | Hit rate warming up; what happens when the cache crashes and there is no timeout | `synod run ./webapp` |
 | `wal` | Write-ahead log and checkpoint recovery | Which writes survive a crash between checkpoints | `synod run ./wal` |
 
+## Why Synod
+
+Synod is named after the Synod protocol, the core consensus algorithm in Leslie Lamport's paper "The Part-Time Parliament" (ACM Transactions on Computer Systems, 1998; first submitted in 1990). The paper tells it as the story of the parliament of the ancient Greek island of Paxos, whose part-time legislators could agree on decrees although they came and went; today the algorithm is known as Paxos. Lamport later explained it plainly in "Paxos Made Simple" (2001), and in 2013 he received the ACM A.M. Turing Award for fundamental contributions to the theory and practice of distributed and concurrent systems. His "Time, Clocks, and the Ordering of Events in a Distributed System" (1978) and his TLA+ specification language shaped how we reason about such systems. We are grateful for his work, and we hope Synod honours it by making these ideas easier to watch and understand. The `paxos` example is Synod's own namesake algorithm, written in Synod so you can watch it run.
+
 ## Things to try (Break it)
 
 - **Paxos:** delete the loop that adopts the highest prior value, run
