@@ -41,3 +41,5 @@ Canonical sample programs. They form one module,
 - cassandra's record timestamps are named `stamp` (`at` is reserved).
 
 Implements the Synod language specification v0.2.0: https://github.com/synodlang/dsl
+
+Licensed under [CC BY 4.0](LICENSE).
