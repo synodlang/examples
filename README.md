@@ -50,20 +50,17 @@ Synod is named after the Synod protocol, the core consensus algorithm in Leslie 
 - A restarted node starts again from the initial values of its fields,
   including the ones `main` set (for example the peers `gossip.Join`
   sets); only its disk survives.
-- Seeds and timings are chosen so that each demo tells its story under the
-  simulator of `synod run` (the stories are tested in `compiler`,
+- Seeds are chosen so that each demo tells its story under the simulator of
+  `synod run` (the stories are tested in `compiler`,
   `internal/runtest/story_test.go`). Changes made for that, never to a
   protocol: gossip `sim.Seed` 4 to 15 (with 4 a live node suspects a
   healthy peer between 5s and 8s); paxos 7 to 105 (the late proposer's
   Accept carries the adopted `"x"`, as the text above promises); twopc 11
   to 1 (with 11 a decision was sent before the crash at 45ms and no
-  participant stayed prepared); cassandra 5 to 4 (with 5 no hint was kept
-  and the restarted replica stayed empty). The ring demo places
-  `"ada"`, `"alan"`, `"bob"`, `"dave"`, `"grace"` and `"linus"` instead of
-  `user:1` and its siblings: FNV-1a hashes keys that differ only in the
-  last character to nearly the same point, so with those keys no key
-  moved when the fifth node joined; with these two of the six do. tcp,
-  raft, webapp and wal were unchanged (seeds 3 and 9 hold).
+  participant stayed prepared); cassandra 5 to 3 (with 5 no hint was kept
+  and the restarted replica stayed empty). tcp, raft, webapp, wal and ring
+  were unchanged. `math.Hash` mixes FNV-1a with the MurmurHash3 finalizer
+  so that keys such as `user:1` and `user:2` land far apart on the ring.
 
 Implements the Synod language specification v0.2.1: https://github.com/synodlang/dsl
 
