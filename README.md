@@ -40,6 +40,6 @@ Canonical sample programs. They form one module,
   (at most 90ms with the default 10-30ms latency).
 - cassandra's record timestamps are named `stamp` (`at` is reserved).
 
-Implements the Synod language specification v0.2.0: https://github.com/synodlang/dsl
+Implements the Synod language specification v0.2.1: https://github.com/synodlang/dsl
 
 Licensed under [CC BY 4.0](LICENSE).
