@@ -1,21 +1,114 @@
 # Examples
 
-Canonical sample programs. They form one module,
-`github.com/synodlang/examples`. Each behaviour package folder holds a
-`demo.synod` main file (`# package main`) next to the library;
-`webapp/demo.synod` is a pure program in a folder of sub-packages.
+Canonical sample programs for Synod: protocols and systems you can run, break and read.
 
-| Folder | Topic | What to watch | Run |
-| --- | --- | --- | --- |
-| `tcp` | TCP three-way handshake | SYN, SYN-ACK, ACK and the state changes on both ends | `synod run ./tcp` |
-| `gossip` | Gossip membership and failure detection | Heartbeats spreading; a crashed node marked down after 4s; generations after restart | `synod run ./gossip` |
-| `paxos` | Single-decree Paxos (the Synod protocol) | Two racing proposers; the higher ballot adopts any accepted value; the invariant "at most one chosen value" | `synod run ./paxos` |
-| `raft` + `raftlook` | Raft leader election | Randomized timeouts, votes, a leader crash, a new term; "never two leaders in a term" | `synod run ./raft` |
-| `twopc` | Two-phase commit | The blocking problem when the coordinator crashes between phases; the atomicity invariant | `synod run ./twopc` |
-| `ring` + `ringlook` | Consistent hashing with virtual nodes | Which keys move when a fifth node joins | `synod run ./ring` |
-| `cassandra` | A Cassandra-style cluster: gossip + ring + replication factor 3 + QUORUM + hinted handoff | A write succeeding with a replica down, and the hint replayed after restart | `synod run ./cassandra` |
-| `webapp` | Cache-aside behind a load balancer (`api`, `lb`, `app`, `cache`, `db`) | Hit rate warming up; what happens when the cache crashes and there is no timeout | `synod run ./webapp` |
-| `wal` | Write-ahead log and checkpoint recovery | Which writes survive a crash between checkpoints | `synod run ./wal` |
+[![ci](https://github.com/synodlang/examples/actions/workflows/ci.yml/badge.svg)](https://github.com/synodlang/examples/actions/workflows/ci.yml)
+[![licence](https://img.shields.io/badge/licence-CC%20BY%204.0-lightgrey)](LICENSE)
+
+They form one module, `github.com/synodlang/examples`. Each behaviour
+package folder holds a `demo.synod` main file (`# package main`) next to the
+library; `webapp/demo.synod` is a pure program in a folder of sub-packages.
+
+## Where it fits
+
+These programs are the acceptance tests of the language: the
+[compiler](https://github.com/synodlang/compiler) must check and run every one,
+with a story that matches the text below. They are also the best way to learn
+Synod after the first chapter of the
+[specification](https://github.com/synodlang/dsl).
+
+| Repository | Its part |
+| --- | --- |
+| [dsl](https://github.com/synodlang/dsl) | The language the examples are written in |
+| [std](https://github.com/synodlang/std) | The standard library they import |
+| [compiler](https://github.com/synodlang/compiler) | `synod`, which runs them; it keeps a vendored copy for its tests and fails if the copy drifts |
+| `examples` (this one) | The programs |
+
+## Run them
+
+Install `synod` (https://synodlang.github.io/install/), for example:
+
+```
+brew install synodlang/tap/synod
+```
+
+Then, from a clone of this repository:
+
+```
+git clone https://github.com/synodlang/examples
+cd examples
+synod check
+synod run ./tcp
+```
+
+`synod check` with no path checks every package here and prints nothing when
+all is well. `synod run <folder>` simulates the folder's `demo.synod` and
+writes `out/trace.jsonl`; add `--summary` to read the run as text, `--seed n`
+to try another seed, and `--trace file` to write the trace somewhere else.
+The run is deterministic: the same seed gives the same trace, byte for byte.
+
+## The examples
+
+| Folder | Topic | What to watch | Seed | Run |
+| --- | --- | --- | --- | --- |
+| `tcp` | TCP three-way handshake | SYN, SYN-ACK, ACK and the state changes on both ends | 1 (default) | `synod run ./tcp` |
+| `gossip` | Gossip membership and failure detection | Heartbeats spreading; a crashed node marked down after 4s; generations after restart | 15 | `synod run ./gossip` |
+| `paxos` | Single-decree Paxos (the Synod protocol) | Two racing proposers; the higher ballot adopts any accepted value; the invariant "at most one chosen value" | 105 | `synod run ./paxos` |
+| `raft` + `raftlook` | Raft leader election | Randomized timeouts, votes, a leader crash, a new term; "never two leaders in a term" | 3 | `synod run ./raft` |
+| `twopc` | Two-phase commit | The blocking problem when the coordinator crashes between phases; the atomicity invariant | 1 | `synod run ./twopc` |
+| `ring` + `ringlook` | Consistent hashing with virtual nodes | Which keys move when a fifth node joins | 1 (default) | `synod run ./ring` |
+| `cassandra` | A Cassandra-style cluster: gossip + ring + replication factor 3 + QUORUM + hinted handoff | A write succeeding with a replica down, and the hint replayed after restart | 3 | `synod run ./cassandra` |
+| `webapp` | Cache-aside behind a load balancer (`api`, `lb`, `app`, `cache`, `db`) | Hit rate warming up; what happens when the cache crashes and there is no timeout | 9 | `synod run ./webapp` |
+| `wal` | Write-ahead log and checkpoint recovery | Which writes survive a crash between checkpoints | 1 (default) | `synod run ./wal` |
+
+Each `demo.synod` asks a question with `lesson.Ask` at the interesting
+moment, and some add a caption with `lesson.Note`. They appear in the trace as
+`lesson.Asked` and `lesson.Noted`. `raftlook` and `ringlook` are looks: they
+check today, and will draw the cluster once the scene builder exists. The
+`always` invariants (`paxos`, `raft`, `twopc`) are checked after every step;
+`--summary` prints an `always:` block saying whether each held.
+
+## A real run
+
+This is the end of `synod run ./twopc --summary`, produced with the current
+compiler. The coordinator, n1, crashed at 45ms, after the participants voted
+yes and before it decided. The last block is the point of the example: n2, n3
+and n4 are all `prepared`, and none can commit or abort alone.
+
+```
+@32.533ms receive n1
+  net.Arrived #4 twopc.Vote{tx 1, yes true} from n3 to n1
+@38.926ms receive n1
+  net.Arrived #6 twopc.Vote{tx 1, yes true} from n4 to n1
+@45ms timer main
+  sim.Crashed n1
+  sim.Emitted lesson.Asked{Question "The coordinator crashed while votes were in flight. What can a prepared participant do?"} by nobody
+@45.881ms receive n1
+  net.Dropped #5 twopc.Vote{tx 1, yes true} from n2 to n1 (crashed)
+  sim.Ended empty
+final:
+  n1 down  twopc.State "waiting", twopc.Participants {n2, n3, n4}
+  n2 up  twopc.State "prepared", twopc.Participants {}
+  n3 up  twopc.State "prepared", twopc.Participants {}
+  n4 up  twopc.State "prepared", twopc.Participants {}
+```
+
+## Layout
+
+```
+tcp/  gossip/  paxos/  raft/  twopc/  ring/  cassandra/  wal/
+    <name>.synod    the library package
+    demo.synod      the main file: builds a cluster, injects requests and faults
+raftlook/  ringlook/   look packages used by the raft and ring demos
+webapp/
+    demo.synod      the main file
+    api/  app/  cache/  db/  lb/    one package per role
+synod.mod           module github.com/synodlang/examples, synod 0.2
+```
+
+Folders that build on others show how packages compose: `cassandra` runs
+`gossip` and `ring` on the same nodes, and `webapp` wires five roles together
+with phrases such as `lb.Balance` and `app.Wire`.
 
 ## Why Synod
 
@@ -62,6 +155,6 @@ Synod is named after the Synod protocol, the core consensus algorithm in Leslie 
   were unchanged. `math.Hash` mixes FNV-1a with the MurmurHash3 finalizer
   so that keys such as `user:1` and `user:2` land far apart on the ring.
 
-Implements the Synod language specification v0.2.1: https://github.com/synodlang/dsl
+Implements the Synod language specification v0.2: https://github.com/synodlang/dsl
 
 Licensed under [CC BY 4.0](LICENSE).
