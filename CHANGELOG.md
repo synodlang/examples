@@ -4,6 +4,11 @@ All notable changes to the Synod examples. Versions share MAJOR.MINOR with the l
 
 ## Unreleased
 
+### Changed
+
+- Every demo's `lesson.Ask` now uses `choosing {…}` with three or four choices, so Predict mode can offer them. The questions are unchanged. One choice is what `synod run --summary` shows; the others are plausible misconceptions.
+- The README summary excerpt shows the `Choices` of `lesson.Asked`.
+
 ## v0.2.0 — 2026-10-22
 
 Implements Synod 0.2.

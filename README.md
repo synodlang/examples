@@ -61,8 +61,10 @@ The run is deterministic: the same seed gives the same trace, byte for byte.
 | `webapp` | Cache-aside behind a load balancer (`api`, `lb`, `app`, `cache`, `db`) | Hit rate warming up; what happens when the cache crashes and there is no timeout | 9 | `synod run ./webapp` |
 | `wal` | Write-ahead log and checkpoint recovery | Which writes survive a crash between checkpoints | 1 (default) | `synod run ./wal` |
 
-Each `demo.synod` asks a question with `lesson.Ask` at the interesting
-moment, and some add a caption with `lesson.Note`. They appear in the trace as
+Each `demo.synod` asks a question with `lesson.Ask … choosing` at the
+interesting moment: three or four choices, one of them what the run shows and
+the others common misconceptions. Some demos also add a caption with
+`lesson.Note`. They appear in the trace as
 `lesson.Asked` and `lesson.Noted`. `raftlook` and `ringlook` are looks: they
 draw the cluster in `out/scene.json`. The other examples are drawn by the
 default look, `std/look/basic`. The
@@ -83,7 +85,7 @@ and n4 are all `prepared`, and none can commit or abort alone.
   net.Arrived #6 twopc.Vote{tx 1, yes true} from n4 to n1
 @45ms timer main
   sim.Crashed n1
-  sim.Emitted lesson.Asked{Question "The coordinator crashed while votes were in flight. What can a prepared participant do?"} by nobody
+  sim.Emitted lesson.Asked{Question "The coordinator crashed while votes were in flight. What can a prepared participant do?", Choices {"Commit, because it voted yes", "Abort on its own, because the coordinator is gone", "Wait for the coordinator: it voted yes, so it cannot decide alone", "Elect a new coordinator among the participants"}} by nobody
 @45.881ms receive n1
   net.Dropped #5 twopc.Vote{tx 1, yes true} from n2 to n1 (crashed)
   sim.Ended empty
