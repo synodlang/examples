@@ -4,6 +4,8 @@ All notable changes to the Synod examples. Versions share MAJOR.MINOR with the l
 
 ## Unreleased
 
+Implements Synod 0.3: `synod.mod` says `synod 0.3`. The programs are unchanged.
+
 ## v0.2.1 — 2026-10-22
 
 Implements Synod 0.2; works with compiler v0.2.5.
