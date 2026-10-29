@@ -10,6 +10,8 @@ Implements Synod 0.3: `synod.mod` says `synod 0.3`. The programs are unchanged e
 
 - `paxos` is correct under crash and restart: an acceptor writes `Promised` before it sends a Promise, and `Promised`, `AcceptedBallot` and `AcceptedValue` before it sends Accepted; a proposer writes `round` before it sends Prepare; `define [n: Node] start` reads them back with `disk.Read`. Before, `sim.Restart` reset these fields and two values could be chosen. The demo (seed 105) tells the same story; its trace gains `disk.Written` events.
 - `ringlook` draws each node as a small disc at its first token, over the marks of all its tokens, with the node's keys listed in a column beside it (each key below the last key of its owner), so keys never stack and the marks lie under the discs.
+- `ringlook` redraws every node's key slot when a node joins, so a placement round after a join starts each column at its owner again instead of continuing below the last key.
+- `ringlook` redraws every node's key slot when a node joins, so a placement round after a join starts each column at its owner again instead of continuing below the last key.
 
 ## v0.2.1 — 2026-10-22
 
