@@ -4,7 +4,7 @@ All notable changes to the Synod examples. Versions share MAJOR.MINOR with the l
 
 ## Unreleased
 
-Implements Synod 0.3: `synod.mod` says `synod 0.3`. The programs are unchanged.
+Implements Synod 0.3: `synod.mod` says `synod 0.3`. The programs are unchanged except `ringlook`, whose wheel is `look.Circle 200` to match `look.Orbit` on the 1040 by 650 canvas.
 
 ## v0.2.1 — 2026-10-22
 
